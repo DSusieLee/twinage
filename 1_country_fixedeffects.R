@@ -1,4 +1,5 @@
 library(tidyverse)
+library(fixest)
 library(rstanarm)
 
 cur_dt <- readRDS('./data/dhs.RDS') %>% 
@@ -18,7 +19,31 @@ cur_dt <- readRDS('./data/dhs.RDS') %>%
 cur_dt <- cur_dt %>%
   filter(!(country %in% "India" & b2 >= 2000) & (!country %in% "South Africa"))
 
+# results presented in Table 1 --------------------------------------------
 
+fixest1 <- feols(fml = twin ~
+                   1 | country, 
+                 data = cur_dt)
+
+fixest2 <- feols(fml = twin ~
+                   mab_scaled + 
+                   I(mab_scaled^2) | country, 
+                 data = cur_dt)
+
+fixest3 <- update(fixest2, . ~ . + parity)
+fixest4 <- update(fixest3, . ~ . + imr_scaled)
+fixest5 <- update(fixest4, . ~ . + log(gdp_per_capita))
+fixest6 <- update(fixest3, . ~ . + log(gdp_per_capita))
+fixest7 <- update(fixest4, . ~ . + no_prime_educ)
+
+fixest8 <- feols(fml = twin ~
+                   mab_scaled*imr_scaled + 
+                   I(mab_scaled^2) | country, 
+                 data = cur_dt)
+
+fixest9 <- update(fixest4, . ~ . + imr_scaled*no_prime_educ)
+
+# posteriors using stan ---------------------------------------------------
 # 1. country fixed effects only -------------------------------------------
 
 post_country <- stan_glm(twin ~
