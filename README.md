@@ -4,7 +4,7 @@ This is the repository of R codes used for producing the paper "More and more tw
 
 Each R script is named in the order of its usage in the process of analyses. For example, "0_1_dhs_reading_in.R" starts with 0, indicating that this is the first script runs codes that prepare data before conducting analyses. 
 
-**All original data are aviailable from the sources below. However, if you wish to directly work on the data we already processed (combining data from different sources) please use the main analytic data "dhs.RDS" which is uploaded.
+**All original data are aviailable from the sources below. If you wish to directly work on the data we already processed (combining data from different sources), please contact us for the main analytic data "dhs.RDS" and other data files. 
 
 Sources of data:
 -DHS: https://dhsprogram.com/ 
