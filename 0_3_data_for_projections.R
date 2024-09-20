@@ -98,44 +98,5 @@ d <- rbind(dfuture, dpast) %>%
   select(-c(1, 3:9)) %>%
   mutate(source = "WPP")
 
-# past from Korea 2010 (unused)----------------------------------------------------
-
-kor_mab_prop <- readRDS("./data/births_1997_2019_Btype.rds") %>%
-  filter(reportY == 2010 & mother_age %in% c(2:8)) %>%
-  rename(mab_cat = mother_age) %>%
-  group_by(mab_cat) %>%
-  summarise(n = n()) %>%
-  mutate(prop_2010_korea = n / sum(n)) %>%
-  ungroup()
-
-kor_mab_prop <- kor_mab_prop %>% 
-  mutate(country = "Korea", 
-         Year = 2010, 
-         num_total_births = sum(n), 
-         mab_cat = unique(d$mab_cat)) %>% 
-  rename(mab_prop = prop_2010_korea) %>%
-  select(-n) %>%
-  mutate(source = "KOSIS")
-
-d <- full_join(d, kor_mab_prop)
-
-# past from DHS (unsed)---------------------------------------------------------------------
-
-d1 <- cur_dt %>%
-  filter(between(year_child_birth, 2006, 2015)) %>% #note, wider range around 2010
-  group_by(country, mab_cat) %>%
-  summarise(n = n()) %>%
-  mutate(prop_2010_dhs = n / sum(n)) %>%
-  select(-n) %>%
-  ungroup() %>%
-  mutate(source = "DHS", 
-         num_total_births = NA,
-         Year = 2010) %>%
-  rename(mab_prop = prop_2010_dhs)
-
-d1$mab_cat <- rep(unique(d$mab_cat), times = length(unique(d1$country)))
-
 # save --------------------------------------------------------------------
-d <- rbind(d, d1[,names(d)])
-
 saveRDS(d, "./data/projection_data_ageprop&popsize.rds")
